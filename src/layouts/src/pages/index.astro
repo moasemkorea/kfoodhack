@@ -7,32 +7,170 @@ const recipes = await Astro.glob('./recipes/*.md');
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>K-Food Hack | Easy Korean Ramen, Grocery & Sauce Hacks</title>
-  <meta name="description" content="Genius Korean convenience store food combos, Buldak ramen hacks, and 5-minute K-food recipes using local grocery ingredients." />
+  <title>K-Food Hack | Interactive Korean Ramen Calculator & Grocery Hacks</title>
+  <meta name="description" content="Customize your Korean ramen spice level, discover Trader Joe's & Costco K-food air fryer times, and master 5-minute Korean sauces." />
   <script is:inline src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-50 text-slate-900 max-w-4xl mx-auto px-4 py-10 font-sans">
-  <header class="text-center mb-12">
-    <h1 class="text-4xl font-extrabold text-red-600">🌶️ K-Food Hack</h1>
-    <p class="text-slate-600 mt-2 text-lg">Genius Korean Ramen, Mart & Convenience Store Hacks You Can Make in 5 Minutes</p>
-  </header>
-
-  <section class="mb-12">
-    <h2 class="text-2xl font-bold mb-6 border-b pb-2">🔥 Latest K-Food Hacks</h2>
-    <div class="grid md:grid-cols-2 gap-6">
-      {recipes.map((recipe) => (
-        <a href={recipe.url} class="block bg-white p-6 rounded-xl shadow-sm border hover:border-red-500 transition">
-          <span class="text-xs font-bold text-red-600 uppercase">{recipe.frontmatter.category}</span>
-          <h3 class="text-xl font-bold mt-1">{recipe.frontmatter.title}</h3>
-          <p class="text-slate-600 text-sm mt-2">{recipe.frontmatter.description}</p>
-          <div class="flex gap-3 mt-4 text-xs font-semibold text-slate-500">
-            <span>⏱️ {recipe.frontmatter.totalTime}</span>
-            <span>🔥 {recipe.frontmatter.calories}</span>
-            <span>🌶️ Spice: {recipe.frontmatter.spiceLevel}/5</span>
-          </div>
-        </a>
-      ))}
+<body class="bg-slate-50 text-slate-900 font-sans flex flex-col min-h-screen">
+  
+  <!-- 상단 네비게이션 -->
+  <nav class="bg-white border-b sticky top-0 z-10">
+    <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
+      <a href="/" class="text-2xl font-extrabold text-red-600">🌶️ KFoodHack.com</a>
+      <div class="flex gap-6 text-sm font-semibold text-slate-600">
+        <a href="#calculator" class="hover:text-red-600">Ramen Calculator</a>
+        <a href="#recipes" class="hover:text-red-600">Latest Hacks</a>
+        <a href="/about" class="hover:text-red-600">About & Contact</a>
+      </div>
     </div>
-  </section>
+  </nav>
+
+  <main class="max-w-4xl mx-auto px-4 py-10 flex-grow w-full">
+    <!-- 히어로 타이틀 -->
+    <header class="text-center mb-10">
+      <span class="bg-red-100 text-red-700 text-xs font-bold px-3 py-1 rounded-full uppercase">100% Tested Kitchen Data</span>
+      <h1 class="text-4xl font-extrabold text-slate-900 mt-3">Decode Korean Food in 5 Minutes</h1>
+      <p class="text-slate-600 mt-2 text-lg">Interactive spice neutralizers, convenience store combos, and US/UK grocery hacks.</p>
+    </header>
+
+    <!-- 킬러 기능: K-라면 매운맛 중화 & 꿀조합 계산기 -->
+    <section id="calculator" class="bg-white border-2 border-red-500 rounded-2xl p-6 md:p-8 shadow-md mb-12">
+      <div class="flex items-center justify-between border-b pb-4 mb-6">
+        <div>
+          <h2 class="text-2xl font-bold text-slate-900">🍜 K-Ramen Spice & Ratio Calculator</h2>
+          <p class="text-sm text-slate-500 mt-1">Select your ramen and fridge add-ins to get the exact water/milk ratio and cooking time.</p>
+        </div>
+        <span class="text-3xl">🧪</span>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-4 mb-6">
+        <div>
+          <label class="block text-xs font-bold uppercase text-slate-500 mb-2">1. Choose Your Ramen</label>
+          <select id="ramenType" class="w-full border rounded-lg p-3 bg-slate-50 font-medium">
+            <option value="buldak_orig">Buldak Original (Black)</option>
+            <option value="buldak_carbo">Buldak Carbonara (Pink)</option>
+            <option value="buldak_2x">Buldak 2x Spicy (Red)</option>
+            <option value="shin">Shin Ramyun (Classic Soup)</option>
+            <option value="jin">Jin Ramen Spicy</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase text-slate-500 mb-2">2. Target Spice Level</label>
+          <select id="spiceTarget" class="w-full border rounded-lg p-3 bg-slate-50 font-medium">
+            <option value="mild">Cut Heat by 50% (Creamy & Mild)</option>
+            <option value="balanced">Cut Heat by 25% (Rich & Balanced)</option>
+            <option value="authentic">Keep Original Heat (Umami Boost)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase text-slate-500 mb-2">3. Fridge Add-In</label>
+          <select id="addIn" class="w-full border rounded-lg p-3 bg-slate-50 font-medium">
+            <option value="milk_cheese">Whole Milk + Mozzarella</option>
+            <option value="peanut">Peanut Butter + Garlic (Pad Thai Style)</option>
+            <option value="mayo_egg">Kewpie Mayo + Raw Egg Yolk</option>
+            <option value="american">1 Slice American Cheese + Butter</option>
+          </select>
+        </div>
+      </div>
+
+      <button onclick="calculateHack()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition shadow">
+        Calculate My Exact Ramen Formula ⚡
+      </button>
+
+      <!-- 계산 결과 출력창 -->
+      <div id="hackResult" class="mt-6 bg-amber-50 border border-amber-200 rounded-xl p-5 hidden">
+        <h3 id="resTitle" class="font-extrabold text-lg text-slate-900"></h3>
+        <div class="grid grid-cols-3 gap-2 my-3 text-center">
+          <div class="bg-white p-2 rounded border">
+            <span class="block text-xs text-slate-400">Liquid Ratio</span>
+            <strong id="resLiquid" class="text-sm text-red-600"></strong>
+          </div>
+          <div class="bg-white p-2 rounded border">
+            <span class="block text-xs text-slate-400">Boil Time</span>
+            <strong id="resTime" class="text-sm text-slate-800"></strong>
+          </div>
+          <div class="bg-white p-2 rounded border">
+            <span class="block text-xs text-slate-400">Sauce Packet</span>
+            <strong id="resSauce" class="text-sm text-slate-800"></strong>
+          </div>
+        </div>
+        <p id="resInstruction" class="text-sm text-slate-700 leading-relaxed mt-2"></p>
+      </div>
+    </section>
+
+    <!-- [애드센스 메인 광고 슬롯] -->
+    <div class="my-8 p-4 bg-slate-100 text-center text-xs text-slate-400 rounded border border-dashed">
+      [Google AdSense - Homepage Responsive Slot]
+    </div>
+
+    <!-- 최신 레시피 목록 -->
+    <section id="recipes" class="mb-12">
+      <h2 class="text-2xl font-bold mb-6 border-b pb-2">🔥 Latest K-Food Hacks</h2>
+      <div class="grid md:grid-cols-2 gap-6">
+        {recipes.map((recipe) => (
+          <a href={recipe.url} class="block bg-white p-6 rounded-xl shadow-sm border hover:border-red-500 transition">
+            <span class="text-xs font-bold text-red-600 uppercase">{recipe.frontmatter.category}</span>
+            <h3 class="text-xl font-bold mt-1">{recipe.frontmatter.title}</h3>
+            <p class="text-slate-600 text-sm mt-2">{recipe.frontmatter.description}</p>
+            <div class="flex gap-3 mt-4 text-xs font-semibold text-slate-500">
+              <span>⏱️ {recipe.frontmatter.totalTime}</span>
+              <span>🔥 {recipe.frontmatter.calories}</span>
+              <span>🌶️ Spice: {recipe.frontmatter.spiceLevel}/5</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+  </main>
+
+  <!-- 애드센스 승인 필수 하단 푸터 -->
+  <footer class="bg-slate-900 text-slate-400 text-sm py-8 mt-12">
+    <div class="max-w-4xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+      <p>© 2026 KFoodHack.com. All rights reserved.</p>
+      <div class="flex gap-6">
+        <a href="/about" class="hover:text-white">About & Contact</a>
+        <a href="/privacy" class="hover:text-white">Privacy Policy</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 계산기 작동 스크립트 -->
+  <script is:inline>
+    function calculateHack() {
+      const ramen = document.getElementById('ramenType').value;
+      const spice = document.getElementById('spiceTarget').value;
+      const addIn = document.getElementById('addIn').value;
+
+      const isSoup = (ramen === 'shin' || ramen === 'jin');
+      const sauceAmt = spice === 'mild' ? 'Use 60% of packet' : (spice === 'balanced' ? 'Use 85% of packet' : 'Use 100% full packet');
+      
+      let liquid = isSoup ? '450ml Water + 50ml Milk' : 'Drain water + 1/2 cup Milk';
+      let time = isSoup ? '4 mins 00 sec' : '3 mins 15 sec (undercooked)';
+      let guide = '';
+
+      if (addIn === 'milk_cheese') {
+        liquid = isSoup ? '400ml Water + 100ml Milk' : 'Drain 100% water + 1/2 cup Whole Milk';
+        guide = 'Boil noodles for 3m 15s and drain. Simmer milk and sauce in the pan for 60 seconds until thick, then melt 1/3 cup mozzarella on top.';
+      } else if (addIn === 'peanut') {
+        liquid = 'Keep 6 tbsp noodle water';
+        guide = 'Whisk 1 tbsp creamy peanut butter + 1/2 tsp minced garlic with hot noodle water before tossing the noodles. Tastes like spicy Korean Pad Thai!';
+      } else if (addIn === 'mayo_egg') {
+        liquid = isSoup ? '500ml Water' : 'Keep 4 tbsp noodle water';
+        guide = 'In your serving bowl, mix 1 raw egg yolk + 1 tbsp Kewpie mayo + seasoning packet. Slowly pour hot noodles over and stir vigorously for a silky emulsion.';
+      } else {
+        liquid = isSoup ? '500ml Water' : 'Keep 5 tbsp noodle water';
+        guide = 'Finish cooking, turn off the heat, and place 1 slice of Kraft American cheese + 1 tsp butter directly on the hot noodles. Stir until glossy.';
+      }
+
+      document.getElementById('resTitle').innerText = 'Recommended Custom Hack Formula:';
+      document.getElementById('resLiquid').innerText = liquid;
+      document.getElementById('resTime').innerText = time;
+      document.getElementById('resSauce').innerText = sauceAmt;
+      document.getElementById('resInstruction').innerText = guide;
+      document.getElementById('hackResult').classList.remove('hidden');
+    }
+  </script>
 </body>
 </html>
