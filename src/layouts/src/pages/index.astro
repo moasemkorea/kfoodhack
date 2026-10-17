@@ -1,0 +1,38 @@
+---
+const recipes = await Astro.glob('./recipes/*.md');
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>K-Food Hack | Easy Korean Ramen, Grocery & Sauce Hacks</title>
+  <meta name="description" content="Genius Korean convenience store food combos, Buldak ramen hacks, and 5-minute K-food recipes using local grocery ingredients." />
+  <script is:inline src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-900 max-w-4xl mx-auto px-4 py-10 font-sans">
+  <header class="text-center mb-12">
+    <h1 class="text-4xl font-extrabold text-red-600">🌶️ K-Food Hack</h1>
+    <p class="text-slate-600 mt-2 text-lg">Genius Korean Ramen, Mart & Convenience Store Hacks You Can Make in 5 Minutes</p>
+  </header>
+
+  <section class="mb-12">
+    <h2 class="text-2xl font-bold mb-6 border-b pb-2">🔥 Latest K-Food Hacks</h2>
+    <div class="grid md:grid-cols-2 gap-6">
+      {recipes.map((recipe) => (
+        <a href={recipe.url} class="block bg-white p-6 rounded-xl shadow-sm border hover:border-red-500 transition">
+          <span class="text-xs font-bold text-red-600 uppercase">{recipe.frontmatter.category}</span>
+          <h3 class="text-xl font-bold mt-1">{recipe.frontmatter.title}</h3>
+          <p class="text-slate-600 text-sm mt-2">{recipe.frontmatter.description}</p>
+          <div class="flex gap-3 mt-4 text-xs font-semibold text-slate-500">
+            <span>⏱️ {recipe.frontmatter.totalTime}</span>
+            <span>🔥 {recipe.frontmatter.calories}</span>
+            <span>🌶️ Spice: {recipe.frontmatter.spiceLevel}/5</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+</body>
+</html>
