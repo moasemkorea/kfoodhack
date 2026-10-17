@@ -1,0 +1,82 @@
+---
+const { frontmatter } = Astro.props;
+const ingredients = frontmatter.ingredients || [];
+const steps = frontmatter.steps || [];
+
+const recipeSchema = {
+  "@context": "https://schema.org/",
+  "@type": "Recipe",
+  "name": frontmatter.title,
+  "image": [`https://kfoodhack.com${frontmatter.image || '/images/default.webp'}`],
+  "description": frontmatter.description,
+  "keywords": frontmatter.keywords,
+  "prepTime": frontmatter.prepTimeISO || "PT5M",
+  "cookTime": frontmatter.cookTimeISO || "PT5M",
+  "totalTime": frontmatter.totalTimeISO || "PT10M",
+  "recipeYield": frontmatter.servings || "1 serving",
+  "recipeCategory": frontmatter.category || "K-Food Hack",
+  "recipeCuisine": "Korean",
+  "nutrition": {
+    "@type": "NutritionInformation",
+    "calories": frontmatter.calories || "500 kcal"
+  },
+  "recipeIngredient": ingredients,
+  "recipeInstructions": steps.map((step, index) => ({
+    "@type": "HowToStep",
+    "position": index + 1,
+    "text": step
+  }))
+};
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{frontmatter.title} | K-Food Hack</title>
+  <meta name="description" content={frontmatter.description} />
+  <script is:inline src="https://cdn.tailwindcss.com?plugins=typography"></script>
+  <script type="application/ld+json" set:html={JSON.stringify(recipeSchema)} />
+</head>
+<body class="bg-slate-50 text-slate-900 max-w-3xl mx-auto px-4 py-8 font-sans">
+  <header class="mb-8 border-b pb-4">
+    <a href="/" class="text-red-600 font-extrabold text-2xl">🌶️ KFoodHack.com</a>
+    <span class="block text-sm text-red-500 font-semibold mt-2">{frontmatter.category}</span>
+    <h1 class="text-3xl font-bold mt-1">{frontmatter.title}</h1>
+    <p class="text-slate-600 mt-2">{frontmatter.description}</p>
+    <div class="flex flex-wrap gap-4 mt-4 text-sm font-semibold bg-white p-3 rounded-lg shadow-sm border">
+      <span>⏱️ Time: {frontmatter.totalTime}</span>
+      <span>🔥 Calories: {frontmatter.calories}</span>
+      <span>🌶️ Spice Level: {frontmatter.spiceLevel}/5</span>
+    </div>
+  </header>
+
+  <div class="my-6 p-4 bg-slate-100 text-center text-xs text-slate-400 rounded border border-dashed">
+    [Google AdSense - Top Banner Slot]
+  </div>
+
+  <article class="prose prose-slate max-w-none bg-white p-6 rounded-xl shadow-sm border">
+    <slot />
+  </article>
+
+  <div class="my-8 p-4 bg-slate-100 text-center text-xs text-slate-400 rounded border border-dashed">
+    [Google AdSense - Pre-Recipe High CTR Slot]
+  </div>
+
+  <section class="bg-white border-2 border-red-500 rounded-xl p-6 mt-8 shadow-md">
+    <h2 class="text-2xl font-bold text-slate-900">{frontmatter.title}</h2>
+    <p class="text-sm text-slate-500 mb-4">Servings: {frontmatter.servings} | Total Time: {frontmatter.totalTime}</p>
+    
+    <h3 class="font-bold text-lg border-b pb-1 mb-2">Ingredients</h3>
+    <ul class="list-disc pl-5 mb-6 space-y-1">
+      {ingredients.map((item) => <li>{item}</li>)}
+    </ul>
+
+    <h3 class="font-bold text-lg border-b pb-1 mb-2">Step-by-Step Hack</h3>
+    <ol class="list-decimal pl-5 space-y-2">
+      {steps.map((step) => <li>{step}</li>)}
+    </ol>
+  </section>
+</body>
+</html>
