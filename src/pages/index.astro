@@ -1,5 +1,4 @@
 ---
-// recipes 폴더가 비어 있어도 절대 빌드 에러가 나지 않는 안전 코드
 const recipeModules = import.meta.glob('./recipes/*.md', { eager: true });
 const recipes = Object.values(recipeModules);
 ---
@@ -104,7 +103,7 @@ const recipes = Object.values(recipeModules);
         <p class="text-slate-500 bg-white p-6 rounded-xl border text-center">New K-Food hack recipes are coming soon!</p>
       ) : (
         <div class="grid md:grid-cols-2 gap-6">
-          {recipes.map((recipe) => (
+          {recipes.map((recipe: any) => (
             <a href={recipe.url} class="block bg-white p-6 rounded-xl shadow-sm border hover:border-red-500 transition">
               <span class="text-xs font-bold text-red-600 uppercase">{recipe.frontmatter?.category}</span>
               <h3 class="text-xl font-bold mt-1">{recipe.frontmatter?.title}</h3>
